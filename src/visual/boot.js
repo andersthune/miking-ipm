@@ -56,18 +56,10 @@ bs.init({
     watch: true,
     port: 3000,
     notify: false,
-    server: __dirname + '/webpage'
+    server: __dirname + '/webpage',
+    open: false,
+    codeSync: false
 });
 
 bs.reload();
-
-
-
-
-
-
-
-
-
-
 
