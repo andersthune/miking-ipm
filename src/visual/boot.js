@@ -1,6 +1,6 @@
-let topComment = 
+let topComment =
 `/**
-* Initializes the DFA object. 
+* Initializes the DFA object.
 * This file was automatically generated from src/visual/boot.js.
 */\n`;
 
@@ -12,24 +12,35 @@ var fs = require('fs');
 //Get the file that is being edited
 var myArgs = process.argv.slice(2);
 console.log('myArgs: ', myArgs);
-if(myArgs.length > 1 || myArgs.length == 0){
-    throw Error ('One file needs to be specified');
+
+var open_browser = true
+var sourceFile = ""
+
+function process_arg(arg) {
+    switch (arg) {
+    case '--no-open':
+        open_browser = false;
+        break;
+    default:
+        sourceFile = arg;
+    }
 }
-var sourceFile = myArgs[0];
+
+myArgs.map(process_arg);
 
 //Specify the path to the miking executable in this variable:
 //Compile the code
 function compile_fun() {
     exec("mi " + sourceFile + ' > ' + __dirname +'/webpage/js/data-source.js', (error, stdout, stderr) => {
-	if (error) {
-	    fs.readFile(__dirname +'/webpage/js/data-source.js', function(err, buf) {
-		fs.writeFile(__dirname +'/webpage/js/data-source.js',
-			     "let inputModel = '" + buf.toString().replace(/(\r\n|\n|\r)/gm, "")
-			     + "';" , function (err) {if (err) return console.log(err);});});return;}
-	if (stderr) {
-            console.log(`stderr: ${stderr}`);
-            return;
-	}
+    if (error) {
+        fs.readFile(__dirname +'/webpage/js/data-source.js', function(err, buf) {
+        fs.writeFile(__dirname +'/webpage/js/data-source.js',
+            "let inputModel = '" + buf.toString().replace(/(\r\n|\n|\r)/gm, "")
+            + "';" , function (err) {if (err) return console.log(err);});});return;}
+    if (stderr) {
+        console.log(`stderr: ${stderr}`);
+        return;
+    }
     });
 }
 
@@ -57,9 +68,7 @@ bs.init({
     port: 3000,
     notify: false,
     server: __dirname + '/webpage',
-    open: false,
-    codeSync: false
+    open: open_browser
 });
 
 bs.reload();
-
