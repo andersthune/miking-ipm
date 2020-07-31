@@ -176,7 +176,7 @@ let treeVisual = lam model. lam node2str. lam displayNames.
     formatGraph nodes edges "tree"
 
 -- make all models into string object
-let visualize = lam models.
+let visualizeString = lam models.
     let models = strJoin ",\n" (
         map (lam model. 
             match model with Digraph(model,vertex2str,edge2str,displayNames) then
@@ -197,11 +197,16 @@ let visualize = lam models.
                 nfaVisual model input state2str label2str "nfa" []
             else match model with BTree(model, node2str,displayName) then
                 treeVisual model node2str displayName
-	        else match model with BTree(model, node2str) then
+	    else match model with BTree(model, node2str) then
                 treeVisual model node2str []
             else error "unknown type") models) in
-    print (foldl concat [] ["let data = {\"models\": [\n", models, "]\n}\n"])
-                        
+    foldl concat [] ["let data = {\"models\": [\n", models, "]\n}\n"]
+
+let visualizeNb = visualizeString
+
+-- print a json representation of a list of models
+let visualize = compose print visualizeString
+
 mexpr
 let alfabeth = ['0','1','2'] in
 let states = [1,2,3] in
